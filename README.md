@@ -75,18 +75,6 @@ Please follow the follwoing steps to steup the raspberry pi
 * update repos `sudo apt-get update`
 * update software `sudo apt-get dist-upgrade`
 * install software `sudo apt-get install mpd mpc wakeonlan git`
-* stop automated concole activation
-  * `sudo systemctl stop serial-getty@ttyAMA0.service`
-  * `sudo systemctl disable serial-getty@ttyAMA0.service`
-  * `sudo systemctl mask serial-getty@ttyAMA0.service`
-  * `sudo systemctl stop serial-getty@tty1.service`
-  * `sudo systemctl disable serial-getty@tty1.service`
-  * `sudo systemctl mask serial-getty@tty1.service`
-* create folder to mount music folder from NAS
-  * `mkdir /media/music`
-  * `chmod 555 /media/music`
-* Make playlist folder accessable `sudo chmod 777 /var/lib/mpd/playlists`
-* Deploy there at least `radio.m3u`, this is used for playback at startup (entry 4)
 * Reboot Rpi
 * Adjust configuration files from RPi folder and changes dummy credentials, consider to modifiy the following files on your traget system in case your installation has other specifics.  
   * `/boot/firmware/cmdline.txt`
@@ -96,20 +84,37 @@ Please follow the follwoing steps to steup the raspberry pi
     * add `dtoverlay=hifiberry-dac`
   * If you decide to adjust the start volue, you need to do it in `receiver.c`, complie again, and in `startmpd.sh`
 * Copy adjusted configuration files to RPi
-* Compile software to receive data from MCU
-  * `gcc receiver.c -o receiver`
-  * `chmod 755 receiver`
-  * If you test the software on console, make sure to delete temp file in `/tmp/mpdlist` before tring to start the service
+* Install BT audio receiver
+  * `git clone https://github.com/nicokaiser/rpi-audio-receiver.git`
+  * `cd rpi-audio-receiver`
+  * Choose the features as needed when running `./install.sh`
+* create folder to mount music folder from NAS
+  * `mkdir /media/music`
+  * `chmod 555 /media/music`
+* Make playlist folder accessable `sudo chmod 777 /var/lib/mpd/playlists`
+  * Deploy there at least `radio.m3u`, this is used for playback at startup (entry 4)
+* stop automated concole activation
+  * details may depend on your sprecific RPi model and configuration
+	* use `systemctl status` to check for any serial-getty services running and deactivte them using stop, disable, mask
+  * `sudo systemctl stop serial-getty@ttyAMA0.service`
+  * `sudo systemctl disable serial-getty@ttyAMA0.service`
+  * `sudo systemctl mask serial-getty@ttyAMA0.service`
+  * `sudo systemctl stop serial-getty@tty1.service`
+  * `sudo systemctl disable serial-getty@tty1.service`
+  * `sudo systemctl mask serial-getty@tty1.service`
+  * `sudo systemctl stop serial-getty@ttyS0.service`
+  * `sudo systemctl disable serial-getty@ttyS0.service`
+  * `sudo systemctl mask serial-getty@ttyS0.service`
 * Activate services
   * `sudo systemctl enable mpd`
   * `sudo systemctl enable wol`
   * `sudo systemctl enable startmpd`
   * `sudo systemctl enable receiver`
   * `sudo systemctl daemon-reload`
-* Install BT audio receiver
-  * `git clone https://github.com/nicokaiser/rpi-audio-receiver.git`
-  * `cd rpi-audio-receiver`
-  * Choose the features as needed when running `./install.sh`
+* Compile software to receive data from MCU
+  * `gcc receiver.c -o receiver`
+  * `chmod 755 receiver`
+  * If you test the software on console, make sure to delete temp file in `/tmp/mpdlist` before tring to start the service
 ### Debugging
 * Review audio interfaces by
   * `cat /proc/asound/modules`
@@ -119,3 +124,6 @@ Please follow the follwoing steps to steup the raspberry pi
   * `systemctl [status servicename]`
 * Review system logs
   * `journalctl -rm -n 1000`
+* Inspect data from MCU
+  * install minicom `sudo apt-get install minicom`
+  * `mincom --device /dev/tytyS0 --baudrate 57600`

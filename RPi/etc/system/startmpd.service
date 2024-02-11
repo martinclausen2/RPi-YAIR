@@ -10,12 +10,12 @@ ExecStart=+/bin/bash /home/pi/startmpd.sh
 TimeoutStartSec=120
 
 # disallow writing to /usr, /bin, /sbin, ...
-#ProtectSystem=yes
+ProtectSystem=yes
 
 # more paranoid security settings
-#NoNewPrivileges=yes
-#ProtectKernelTunables=yes
-#ProtectControlGroups=yes
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
 
 # Note that "ProtectKernelModules=yes" is missing in the user unit
 # because systemd 232 is unable to reduce its own capabilities
