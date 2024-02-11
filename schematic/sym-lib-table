@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Internet-Radio mit 89LPC922 DIP-rescue")(type "KiCad")(uri "${KIPRJMOD}/Internet-Radio mit 89LPC922 DIP-rescue.kicad_sym")(options "")(descr ""))
+)
