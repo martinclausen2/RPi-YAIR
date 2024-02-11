@@ -1,7 +1,7 @@
 # RPi-YAIR
 Raspberry Pi YAIR (Yet Another Internet Radio)
 
-Diverted from [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
+Diverted from [Raspberry Pi YAIR - Yet Another Internet Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio) )
 
 German parts to be translated later. Details on one particular hardware setup to be found under articel cited above.
 
@@ -20,7 +20,7 @@ Ja, es gibt sie: Internetradios. Zum Kaufen. Zum Selbst bauen. Aus Routern. Aus 
 
 * Basis Raspberry Pi Zero (nur headless) oder besser, 512MB, WLAN und BT
 * I2S Audio DAC connection please see [External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.)
-* Microcontroller connnection please see [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
+* Microcontroller connnection please see [Raspberry Pi YAIR - Yet Another Internet Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio) )
 
 ## MCU
 
@@ -48,11 +48,13 @@ Die Software besteht aus folgenden Teilen:
 
 Der RC5 Decoder beruht auf einer State-Machine, die schrittweise die einzelnen Bits erkennt und dann in Adresse und Daten zerlegt. Nach der Erkennung eines kompletten Kommandos wird steht rCounter auf dem Wert 12 und das Hauptprogramm beginnt mit der Decodierung (Aufruf "DecodeRemote()").
 
-Die Software kann per #define in Quellcode für LPC922 oder LPC93X kompiliert werden. Die zusätzlichen Funktionsblöcke der LPC93X werden nicht verwendet.
+Die Software kann per #define in Quellcode für LPC922 oder LPC93X kompiliert werden. Die zusätzlichen Funktionsblöcke der LPC93X werden nicht verwendet. Als Kompiler ist SDCC zu verwenden.
 
-Bei Bedarf könnte ich MCUs programmieren. Alternativ ist der Code sicher leicht auf einen AVR zu portieren. 
+Bei Bedarf könnte ich MCUs programmieren. Alternativ ist der Code sicher leicht auf einen AVR, STM32, oder ... zu portieren. 
 
 ## Raspberry Pi Setup
+
+### Step by Step Instructions
 
 Please follow the follwoing steps to steup the raspberry pi
 
@@ -84,8 +86,15 @@ Please follow the follwoing steps to steup the raspberry pi
   * `mkdir /media/music`
   * `chmod 555 /media/music`
 * Make playlist folder accessable `sudo chmod 777 /var/lib/mpd/playlists`
+* Deploy there at least `radio.m3u`, this is used for playback at startup (entry 4)
 * Reboot Rpi
-* Adjust configuration files from RPi folder and changes dummy credentials
+* Adjust configuration files from RPi folder and changes dummy credentials, consider to modifiy the following files on your traget system in case your installation has other specifics.  
+  * `/boot/firmware/cmdline.txt`
+    * remove `console=tty1`
+  * `/boot/firmware/config.txt`
+    * remove `dtparam=audio=on` by addin a hash in fromt of the line
+    * add `dtoverlay=hifiberry-dac`
+  * If you decide to adjust the start volue, you need to do it in `receiver.c`, complie again, and in `startmpd.sh`
 * Copy adjusted configuration files to RPi
 * Compile software to receive data from MCU
   * `gcc receiver.c -o receiver`
@@ -95,9 +104,18 @@ Please follow the follwoing steps to steup the raspberry pi
   * `sudo systemctl enable mpd`
   * `sudo systemctl enable wol`
   * `sudo systemctl enable startmpd`
-  * `systemctl daemon-reload`
+  * `sudo systemctl enable receiver`
+  * `sudo systemctl daemon-reload`
 * Install BT audio receiver
   * `git clone https://github.com/nicokaiser/rpi-audio-receiver.git`
   * `cd rpi-audio-receiver`
   * Choose the features as needed when running `./install.sh`
-
+### Debugging
+* Review audio interfaces by
+  * `cat /proc/asound/modules`
+  * `cat /proc/asound/cards`
+* Review service status
+  * `systemctl status`
+  * `systemctl [status servicename]`
+* Review system logs
+  * `journalctl -rm -n 1000`
