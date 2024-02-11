@@ -48,3 +48,41 @@ Bei Bedarf könnte ich MCUs programmieren. Alternativ ist der Code sicher leicht
 
 ## Raspberry Pi Setup
 
+Please follow the follwoing steps to steup the raspberry pi
+
+* deploy raspberry pi os bookworm on sdcard
+* setup the configuration 'sudo raspi-config'
+  * setup system options
+    * WLAN
+    * Hostname
+  * Interface
+    * SSH
+    * Serail Port - enable serial port, but not (!) console
+  * Localisation Options
+    * Timezone
+    * Keyboard
+    * WLAN Country
+  * Advanced Options
+    * Expand Filesystem
+* update repos `sudo apt-get update`
+* update software `sudo apt-get dist-upgrade`
+* install software `sudo apt-get install mpd mpc wakeonlan`
+* stop automated concole activation
+  * `sudo systemctl stop serial-getty@ttyAMA0.service`
+  * `sudo systemctl disable serial-getty@ttyAMA0.service`
+  * `sudo systemctl mask serial-getty@ttyAMA0.service`
+  * `sudo systemctl stop serial-getty@tty1.service`
+  * `sudo systemctl disable serial-getty@tty1.service`
+  * `sudo systemctl mask serial-getty@tty1.service`
+* create folder to mount music folder from NAS
+  * `mkdir /media/music`
+  * `chmod 555 /media/music`
+* Make playlist folder accessable `sudo chmod 777 /var/lib/mpd/playlists`
+* Reboot Rpi
+* Adjust configuration files from RPi folder and changes dummy credentials
+* Copy adjusted configuration files to RPi
+* Compile software to receive data from MCU
+  * `gcc receiver.c -o receiver`
+  * `chmod 755 receiver`
+* Activate services
+  * `sudo systemctl enable mpd`
