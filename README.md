@@ -1,7 +1,7 @@
 # RPi-YAIR
 Raspberry Pi YAIR (Yet Another Internet Radio)
 
-Diverted from [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
+Diverted from [Raspberry Pi YAIR - Yet Another Internet Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio) )
 
 German parts to be translated later. Details on one particular hardware setup to be found under articel cited above.
 
@@ -20,7 +20,7 @@ Ja, es gibt sie: Internetradios. Zum Kaufen. Zum Selbst bauen. Aus Routern. Aus 
 
 * Basis Raspberry Pi Zero (nur headless) oder besser, 512MB, WLAN und BT
 * I2S Audio DAC connection please see [External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.)
-* Microcontroller connnection please see [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
+* Microcontroller connnection please see [Raspberry Pi YAIR - Yet Another Internet Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio) )
 
 ## MCU
 
@@ -85,7 +85,12 @@ Please follow the follwoing steps to steup the raspberry pi
   * `chmod 555 /media/music`
 * Make playlist folder accessable `sudo chmod 777 /var/lib/mpd/playlists`
 * Reboot Rpi
-* Adjust configuration files from RPi folder and changes dummy credentials
+* Adjust configuration files from RPi folder and changes dummy credentials, consider to modifiy the following files on your traget system in case your installation has other specifics.  
+  * `/boot/firmware/cmdline.txt`
+    * remove `console=tty1`
+  * `/boot/firmware/config.txt`
+    * remove `dtparam=audio=on` by addin a hash in fromt of the line
+    * add `dtoverlay=hifiberry-dac`
 * Copy adjusted configuration files to RPi
 * Compile software to receive data from MCU
   * `gcc receiver.c -o receiver`
