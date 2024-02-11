@@ -1,0 +1,26 @@
+[Unit]
+Description=Receiver from MCU
+After=network.target sound.target
+
+[Service]
+Type=idle
+StandardOutput=journal
+ExecStart=/home/pi/receiver
+Environment=MPD_HOST=notshared@localhost
+
+# disallow writing to /usr, /bin, /sbin, ...
+ProtectSystem=yes
+
+# more paranoid security settings
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+
+# Note that "ProtectKernelModules=yes" is missing in the user unit
+# because systemd 232 is unable to reduce its own capabilities
+# ("Failed at step CAPABILITIES spawning /usr/bin/mpd: Operation not
+# permitted")
+
+[Install]
+WantedBy=default.target
+
