@@ -1,6 +1,10 @@
 # RPi-YAIR
 Raspberry Pi YAIR (Yet Another Internet Radio)
 
+Diverted from [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
+
+German parts to be translated later. Details on one particular hardware setup to be found under articel cited above.
+
 ### Einleitung
 
 Ja, es gibt sie: Internetradios. Zum Kaufen. Zum Selbst bauen. Aus Routern. Aus dem Raspberry Pi. Aber schlussendlich gefiel mir keines so gut, dass es mich vom Selbstbau abgehalten hätte ...
@@ -12,9 +16,11 @@ Ja, es gibt sie: Internetradios. Zum Kaufen. Zum Selbst bauen. Aus Routern. Aus 
 * Sehr niedriger Standby-Stromverbrauch
 * Lesen der Musik via Netzwerk oder empfang via BT
 
-### Technische Eigenschaften
+### Hardware Setup
 
 * Basis Raspberry Pi Zero (nur headless) oder besser, 512MB, WLAN und BT
+* I2S Audio DAC connection please see [External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/External-Non-USB-Audio-DAC-ES9023,-PCM5102,-etc.)
+* Microcontroller connnection please see [Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio](https://www.mikrocontroller.net/articles/Raspberry_Pi_YAIR_(Yet_Another_Internet_Radio))
 
 ## MCU
 
@@ -66,7 +72,7 @@ Please follow the follwoing steps to steup the raspberry pi
     * Expand Filesystem
 * update repos `sudo apt-get update`
 * update software `sudo apt-get dist-upgrade`
-* install software `sudo apt-get install mpd mpc wakeonlan`
+* install software `sudo apt-get install mpd mpc wakeonlan git`
 * stop automated concole activation
   * `sudo systemctl stop serial-getty@ttyAMA0.service`
   * `sudo systemctl disable serial-getty@ttyAMA0.service`
@@ -84,5 +90,14 @@ Please follow the follwoing steps to steup the raspberry pi
 * Compile software to receive data from MCU
   * `gcc receiver.c -o receiver`
   * `chmod 755 receiver`
+  * If you test the software on console, make sure to delete temp file in `/tmp/mpdlist` before tring to start the service
 * Activate services
   * `sudo systemctl enable mpd`
+  * `sudo systemctl enable wol`
+  * `sudo systemctl enable startmpd`
+  * `systemctl daemon-reload`
+* Install BT audio receiver
+  * `git clone https://github.com/nicokaiser/rpi-audio-receiver.git`
+  * `cd rpi-audio-receiver`
+  * Choose the features as needed when running `./install.sh`
+
