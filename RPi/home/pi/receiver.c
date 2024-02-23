@@ -38,7 +38,6 @@ char doubledigit=0;
 int laenge=0;				// Play list length
 int fd;					// File descriptor
 int sender=1;				// no of current play list item
-int anzahl=0;				// no of play list items
 int lautst=70;				// start volume, should correspond to startup value defineed else where
 
 struct	termios newtio={};
@@ -55,15 +54,6 @@ unsigned char eingangleer()		//Eingangstring leeren
 unsigned char radioein()		//gew√§hlten Platz in der Playlist abspielen
 {
 	char befehl[255]="";
-
-	if(anzahl<sender)		//check limits, with warp around
-		{
-		sender=1;
-		}
-	else if (sender<1)
-		{
-		sender=anzahl;
-		}
 	sprintf(befehl,"mpc play %d",sender);
 	system(befehl);
 }
@@ -76,35 +66,6 @@ unsigned char playnext()
 unsigned char playprev()
 {
 	system("mpc prev");
-}
-
-unsigned char initmpd()				//Schnittstelle parametrieren und ˆffnen
-{
-	system("mpc playlist > /tmp/mpdlist");	//Playlist zwischenspeichern
-	sleep(1);
-	FILE *f;
-	char Text[300]="";
-	f = fopen("/tmp/mpdlist","r");
-	anzahl=0;				//Anzahl Eintr√§ge der Senderliste z‰hlen
-	if(f!=NULL){
-		fgets(Text, sizeof(Text), f);
-		if(strlen(Text)<2){
-			fclose(f);
-			return 0;
-		}else{
-			anzahl=1;
-			while( fgets(Text, sizeof(Text), f) !=0 ){
-				if(strlen(Text)>2){
-					anzahl++;
-				}
-				if(anzahl>199){		//Nicht mehr wie 200
-					break;
-				}
-			}
-		}
-		fclose(f);
-	}
-	printf("Found %d title in play list.\n", anzahl);
 }
 
 unsigned char lautsetzen()			//Lautst√§rke einstellen
@@ -268,7 +229,6 @@ int main(int argc, char** argv)		//Programmstart
 	char c;
 
  	init();					//Schnittstelle parametrieren und ˆffnen
- 	initmpd();				//mpd auf definierten Zustand bringen
 	printf("Ready to receive data.\n");
 	while (1)
         {
